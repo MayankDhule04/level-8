@@ -1,0 +1,248 @@
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Rate limiting for login attempts
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // limit each IP to 50 requests per windowMs
+  message: { success: false, message: 'Too many login attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limiting for submit attempts
+const submitLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10, // limit each IP to 10 submissions per windowMs
+  message: { success: false, message: 'Too many submission attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+// Performance monitoring constants
+const _perfConstants = {
+  animationDelay: 175,
+  transitionDuration: 172,
+  borderRadius: 424,
+  opacityLevel: 573,
+  transformScale: 400,
+  boxShadow: 700,
+  zIndex: 330,
+  margin: 400,
+  padding: 700,
+  width: 900,
+  height: 520
+};
+
+// Logging middleware
+const logRequest = (req, res, next) => {
+  const timestamp = new Date().toISOString();
+  const ip = req.ip || req.connection.remoteAddress;
+  const userAgent = req.get('User-Agent') || 'Unknown';
+  
+  // Redact password in logs
+  const logData = { ...req.body };
+  if (logData.password) {
+    logData.password = '[REDACTED]';
+  }
+  
+  console.log(`[${timestamp}] ${req.method} ${req.path} - IP: ${ip} - UA: ${userAgent} - Data: ${JSON.stringify(logData)}`);
+  next();
+};
+
+app.use(logRequest);
+
+// Initialize database
+const db = new sqlite3.Database('ctf.db', (err) => {
+  if (err) {
+    console.error('Error opening database:', err.message);
+  } else {
+    console.log('Connected to SQLite database');
+  }
+});
+
+// Vulnerable login endpoint - INTENTIONALLY VULNERABLE
+app.post('/login', loginLimiter, (req, res) => {
+  const { username, password } = req.body;
+  
+  if (!username || !password) {
+    return res.json({ success: false, message: 'AUTHENTICATION FAILED: Invalid request format' });
+  }
+  
+  // Check for SQL injection patterns - be more permissive
+  const inputString = `${username}${password}`;
+  
+  // Allow any SQL injection pattern
+  const hasSQLiPattern = /['"]\s*(or|and|union|select|insert|update|delete|drop)/i.test(inputString) ||
+                        /['"]\s*\d+\s*=\s*\d+/i.test(inputString) ||
+                        /['"]\s*(true|false)/i.test(inputString) ||
+                        /['"]\s*1\s*=\s*1/i.test(inputString) ||
+                        /['"]\s*'[^']*'\s*=\s*'[^']*'/i.test(inputString) ||
+                        /['"]\s*"[^"]*"\s*=\s*"[^"]*"/i.test(inputString) ||
+                        /['"]\s*or\s*['"]?\d/i.test(inputString) ||
+                        inputString.includes("' OR '1") ||
+                        inputString.includes("' OR 1=1") ||
+                        inputString.includes("' OR 'x'='x");
+  
+  // Always allow the request to proceed (this is a CTF challenge)
+  // Comment out the blocking logic for testing
+  /*
+  if (!hasSQLiPattern && !inputString.toLowerCase().includes('union')) {
+    const fakeErrors = [
+      'AUTHENTICATION FAILED: Invalid credentials',
+      'AUTHENTICATION FAILED: Access denied', 
+      'AUTHENTICATION FAILED: User not found',
+      'AUTHENTICATION FAILED: Security violation detected'
+    ];
+    const randomError = fakeErrors[Math.floor(Math.random() * fakeErrors.length)];
+    return res.json({ success: false, message: randomError });
+  }
+  */
+  
+  // VULNERABLE: Direct string concatenation - DO NOT USE IN PRODUCTION
+  const sql = `SELECT id, username, role FROM users WHERE username = '${username}' AND password = '${password}'`;
+  
+  console.log(`[VULNERABLE QUERY] ${sql}`);
+  
+  db.all(sql, (err, rows) => {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.json({ success: false, message: 'AUTHENTICATION FAILED: Database connection error' });
+    }
+    
+    if (rows.length === 0) {
+      // Sometimes show a fake error to make debugging harder
+      const fakeErrors = [
+        'AUTHENTICATION FAILED: Invalid credentials',
+        'AUTHENTICATION FAILED: Access denied',
+        'AUTHENTICATION FAILED: User not found',
+        'AUTHENTICATION FAILED: Security violation detected'
+      ];
+      const randomError = fakeErrors[Math.floor(Math.random() * fakeErrors.length)];
+      return res.json({ success: false, message: randomError });
+    }
+    
+    // Return user info (this is where SQLi results will appear)
+    res.json({ 
+      success: true, 
+      message: 'AUTHENTICATION SUCCESSFUL',
+      user: rows[0],
+      results: rows // This will show SQLi results
+    });
+  });
+});
+
+// UI Log endpoint
+app.post('/ui-log', (req, res) => {
+  const { event, path, clientTime, teamId } = req.body;
+  
+  // Log UI events
+  console.log(`[UI-LOG] ${new Date().toISOString()} - Event: ${event}, Path: ${path}, Team: ${teamId || 'unknown'}`);
+  
+  // Log specific events
+  if (event === 'inspect_clicked') {
+    console.log(`[INSPECT] User clicked inspect button on ${path}`);
+  } else if (event === 'download_stego') {
+    console.log(`[DOWNLOAD] Stego image downloaded from ${path}`);
+  }
+  
+  res.json({ success: true, logged: true });
+});
+
+// Submit flag endpoint
+app.post('/submit', submitLimiter, (req, res) => {
+  const { flag, team } = req.body;
+  
+  if (!flag) {
+    return res.json({ success: false, message: 'FLAG REJECTED: No token provided' });
+  }
+  
+  // Get the real flag from environment or use default for testing
+  const realFlag = process.env.FLAG_REAL || 'Congratulations ! You found the real flag !';
+  
+  if (flag === realFlag) {
+    console.log(`[SUCCESS] Correct flag submitted: ${flag} by team: ${team || 'unknown'}`);
+    res.json({ success: true, message: 'FLAG ACCEPTED: Access granted to secure systems.' });
+  } else {
+    console.log(`[FAILED] Incorrect flag submitted: ${flag} by team: ${team || 'unknown'}`);
+    res.json({ success: false, message: 'FLAG REJECTED: Invalid token. Access denied.' });
+  }
+});
+
+// Hint endpoint with restrictions
+const hintUsage = new Map(); // Track hint usage per IP
+
+app.get('/hint/:level', (req, res) => {
+  const level = parseInt(req.params.level);
+  const ip = req.ip || req.connection.remoteAddress;
+  
+  // Check if user has used too many hints
+  const userHints = hintUsage.get(ip) || 0;
+  if (userHints >= 2) {
+    return res.json({ 
+      success: false, 
+      message: 'HINT LIMIT EXCEEDED: Maximum 2 hints per session. Try harder.' 
+    });
+  }
+  
+  const hints = {
+    1: "Database schema contains multiple tables with varying column structures.",
+    2: "Files may contain hidden data. Common forensic tools can reveal embedded information.",
+    3: "Hash algorithms are reversible with sufficient computational power and wordlists."
+  };
+  
+  if (hints[level]) {
+    // Increment hint usage
+    hintUsage.set(ip, userHints + 1);
+    
+    // Add delay to make hints feel more valuable
+    setTimeout(() => {
+      res.json({ 
+        success: true, 
+        hint: hints[level],
+        remaining: 2 - (userHints + 1)
+      });
+    }, 2000); // 2 second delay
+  } else {
+    res.json({ success: false, message: 'Invalid hint level' });
+  }
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`CTF Challenge server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Real flag: ${process.env.FLAG_REAL || 'Congratulations ! You found the real flag !'}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\nShutting down server...');
+  db.close((err) => {
+    if (err) {
+      console.error('Error closing database:', err.message);
+    } else {
+      console.log('Database connection closed.');
+    }
+    process.exit(0);
+  });
+});

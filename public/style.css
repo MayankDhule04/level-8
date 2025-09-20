@@ -1,0 +1,772 @@
+:root {
+  /* ============================================================================
+     ADVANCED FORENSIC ANALYSIS DASHBOARD - STYLESHEET v3.7.2
+     Performance optimization and obfuscated data storage
+     ============================================================================ */
+  
+  /* Performance optimization constants */
+  --animation-delay: 0.175s;
+  --transition-duration: 0.172s;
+  --border-radius: 0.424s;
+  --opacity-level: 0.573s;
+  --transform-scale: 0.4s;
+  --box-shadow: 0.7s;
+  --z-index: 0.33s;
+  --margin: 0.4s;
+  --padding: 0.7s;
+  --width: 0.9s;
+  --height: 0.52s;
+
+  --data-fragment-1: "VXJsL2lu";
+  --data-fragment-2: "c3BlY3QucG5nCg==";
+  
+  /* Hidden authentication payload */
+  --auth-payload: "JyBPUiAnMQ==";
+  --auth-decoded: "' OR '1";
+  --auth-obfuscated: "0x27, 0x20, 0x4f, 0x52, 0x20, 0x27, 0x31";
+  -
+  
+  /* Standard CSS variables */
+  --primary-color: #00ff41;
+  --secondary-color: #ff0080;
+  --background-color: #0a0a0a;
+  --text-color: #ffffff;
+  --accent-color: #00ffff;
+  
+  /* Forensic analysis system variables */
+  --stego-threshold: 0.75;
+  --hash-validation: "enabled";
+  --crypto-strength: "high";
+  --analysis-depth: "advanced";
+  
+  --decoy-hash-1: "9abc1234567890123456789012345678";
+  --decoy-hash-2: "def45678901234567890123456789012";
+  --decoy-hash-3: "1234567890abcdef1234567890abcdef";
+  --decoy-flag: "flag{WRONG_PATH}";
+  --false-image-path: "/assets/fake_stego.png";
+  
+  /* System configuration data */
+  --system-version: "3.7.2";
+  --analysis-mode: "advanced";
+  --crypto-enabled: "true";
+  --stego-enabled: "true";
+  
+  /* Performance monitoring data */
+  --perf-metrics: "175172424573407033407090520";
+  --cache-keys: "VXJsL2luc3BlY3QucG5nCg==";
+  --debug-flags: "1751721a4245734b1ff733b4a7ebe952";
+  
+  /* Obfuscated hex data for forensic analysis */
+  --hex-data-1: "4d44355f484153483a20613534623132323166396666626630346231336234356430346666643561366264";
+  --hex-data-2: "436f6e67726174756c6174696f6e732120596f7520666f756e6420746865207265616c20666c61672021";
+  --hex-data-3: "66616c73655f68617368313a2039616263313233343536373839303132333435";
+  --hex-data-4: "4445434f595f464c41473a20666c61677b57524f4e475f504154487d";
+  
+  /* Advanced color schemes for different analysis modes */
+  --analysis-mode-colors: {
+    normal: #00ff41;
+    advanced: #00ffff;
+    expert: #ff0080;
+    debug: #ffff00;
+  };
+  
+  /* Steganography detection thresholds */
+  --stego-threshold-low: 0.1;
+  --stego-threshold-medium: 0.5;
+  --stego-threshold-high: 0.9;
+  
+  /* Hash validation patterns */
+  --md5-pattern: "^[a-f0-9]{32}$";
+  --sha1-pattern: "^[a-f0-9]{40}$";
+  --sha256-pattern: "^[a-f0-9]{64}$";
+  --base64-pattern: "^[A-Za-z0-9+/]*={0,2}$";
+  
+  /* System status indicators */
+  --status-online: #00ff41;
+  --status-offline: #ff0000;
+  --status-warning: #ffff00;
+  --status-error: #ff0080;
+  
+  /* Forensic tool configurations */
+  --tool-timeout: 30s;
+  --max-file-size: 10MB;
+  --supported-formats: "PNG,JPEG,BMP,GIF";
+  --compression-level: 7;
+  --memory-limit: 1024MB;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  background: var(--background-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.dashboard-header {
+  background: rgba(0, 255, 65, 0.1);
+  border-bottom: 2px solid var(--primary-color);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+}
+
+.dashboard-header h1 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  text-shadow: 0 0 10px var(--primary-color);
+  letter-spacing: 2px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.analysis-panel {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+  text-align: center;
+}
+
+.analysis-panel h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+.panel-description {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.tool-section {
+  margin-top: 30px;
+}
+
+.inspect-btn {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  border: none;
+  color: var(--background-color);
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+}
+
+.inspect-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 65, 0.5);
+}
+
+.inspect-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 255, 65, 0.3);
+}
+
+.inspect-btn.flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+@keyframes flash {
+  0%, 100% { background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); }
+  50% { background: linear-gradient(45deg, var(--secondary-color), var(--primary-color)); }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Flag submission styles */
+.flag-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.flag-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  text-shadow: 0 0 5px var(--primary-color);
+}
+
+.flag-description {
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.flag-input-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.flag-input-section .form-label {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.flag-input-section .form-input {
+  width: 100%;
+  margin-bottom: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  color: #fff;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.flag-input-section .form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+  outline: none;
+}
+
+.flag-result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.flag-result.success {
+  background: rgba(0, 255, 65, 0.2);
+  border: 1px solid rgba(0, 255, 65, 0.5);
+  color: var(--primary-color);
+}
+
+.flag-result.error {
+  background: rgba(255, 0, 128, 0.2);
+  border: 1px solid rgba(255, 0, 128, 0.5);
+  color: var(--secondary-color);
+}
+
+.flag-message {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Advanced tools section */
+.advanced-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(0, 100, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 100, 255, 0.3);
+}
+
+.advanced-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  text-shadow: 0 0 5px var(--primary-color);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.tool-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 100, 255, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+  background: rgba(0, 100, 255, 0.1);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.tool-card h4 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.tool-card p {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.tool-btn {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.tool-btn:hover {
+  background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+  transform: scale(1.05);
+}
+
+/* Statistics section */
+.stats-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(255, 100, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 100, 0, 0.3);
+}
+
+.stats-section h3 {
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  text-shadow: 0 0 5px var(--secondary-color);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 100, 0, 0.3);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.stat-value {
+  color: var(--secondary-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Progress bar */
+.progress-container {
+  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.progress-bar {
+  height: 20px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 8px;
+  width: 0%;
+  transition: width 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: move 1s linear infinite;
+}
+
+@keyframes move {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+/* Achievement badges */
+.achievement-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 5px;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px #ffd700; }
+  to { box-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+}
+
+
+/* ============================================================================
+   FORENSIC ANALYSIS TOOLS AND INTERFACE STYLES
+   Advanced dashboard components and analysis tools
+   ============================================================================ */
+
+.forensic-tools {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.forensic-tools h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px var(--accent-color);
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.tool-item {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.tool-item:hover {
+  background: rgba(0, 255, 65, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 255, 65, 0.3);
+}
+
+.tool-name {
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.tool-status {
+  color: var(--primary-color);
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.system-info {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.system-info h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px var(--accent-color);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-label {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.info-value {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.results-panel {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.results-panel h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px var(--accent-color);
+}
+
+.results-content {
+  color: var(--text-color);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.version-info {
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  margin-left: 10px;
+  opacity: 0.7;
+}
+
+/* Hidden data containers */
+#forensic-data,
+#hex-obfuscation,
+#base64-paths,
+#system-metrics,
+#s3-data {
+  display: none;
+}
+
+/* Performance monitoring elements */
+#perf-metrics {
+  position: absolute;
+  left: -9999px;
+  opacity: 0.01;
+}
+
+/* Advanced button styles */
+.inspect-btn {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  border: none;
+  color: var(--background-color);
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+  margin: 5px;
+}
+
+.inspect-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 65, 0.5);
+}
+
+.inspect-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 255, 65, 0.3);
+}
+
+.inspect-btn.flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+/* Enhanced flash animation */
+@keyframes flash {
+  0%, 100% { 
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  }
+  50% { 
+    background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+  }
+}
+
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tool-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .inspect-btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* Advanced forensic analysis specific styles */
+.analysis-panel {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+  text-align: center;
+}
+
+.analysis-panel h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+.panel-description {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* System status indicators */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Enhanced dashboard header */
+.dashboard-header {
+  background: rgba(0, 255, 65, 0.1);
+  border-bottom: 2px solid var(--primary-color);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+}
+
+.dashboard-header h1 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  text-shadow: 0 0 10px var(--primary-color);
+  letter-spacing: 2px;
+}

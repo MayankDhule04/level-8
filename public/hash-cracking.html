@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Cracking Station - Level 8</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .header h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #00ff00, #ffff00, #ff00ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff00ff);
+        }
+        
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00ff00;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title::before {
+            content: '▶';
+            color: #ffff00;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .hint-panel {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid rgba(255, 255, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .hint-panel::before {
+            content: '⚠';
+            position: absolute;
+            top: -8px;
+            left: 15px;
+            background: #0a0a0a;
+            padding: 0 8px;
+            color: #ffff00;
+            font-weight: bold;
+        }
+        
+        .hint-text {
+            color: #ffff00;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 5px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #ffff00, #ffcc00);
+            color: #000;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #ff00ff, #cc00cc);
+            color: #fff;
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .terminal {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #00ff00;
+            margin: 20px 0;
+            position: relative;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .terminal::before {
+            content: 'hashcrack@crypto-lab:~#';
+            color: #ffff00;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            border-left: 4px solid;
+        }
+        
+        .result.success {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        
+        .result.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff0000;
+            color: #ff6666;
+        }
+        
+        .result.info {
+            background: rgba(255, 255, 0, 0.1);
+            border-color: #ffff00;
+            color: #ffffcc;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .stage {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stage.active {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            color: #000;
+        }
+        
+        .stage.completed {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: #000;
+        }
+        
+        .stage.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+        }
+        
+        .flag-panel {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flag-panel h3 {
+            color: #ff00ff;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>HASH CRACKING STATION</h1>
+            <div style="color: #888; font-size: 1rem;">Advanced Cryptographic Analysis Center</div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>CRYPTO ENGINE ONLINE</span>
+            </div>
+            <div class="status-item">
+                <span>ALGORITHMS: MD5, BASE64</span>
+            </div>
+            <div class="status-item">
+                <span>STATUS: <span style="color: #00ff00;">READY</span></span>
+            </div>
+            <div class="status-item">
+                <span id="currentTime"></span>
+            </div>
+        </div>
+        
+        <div class="stage-indicator">
+            <div class="stage completed">SQLi</div>
+            <div class="stage completed">Stego</div>
+            <div class="stage active">Hash1</div>
+            <div class="stage pending">Hash2</div>
+            <div class="stage pending">Flag</div>
+        </div>
+        
+        <div class="hint-panel">
+            <div class="hint-text">
+                <strong>CRYPTO INTEL:</strong> Two-stage hashing detected. First stage uses MD5 algorithm, second stage uses Base64 encoding. Sequential decryption required to obtain final flag component.
+            </div>
+        </div>
+        
+        <div class="main-grid">
+            <div class="panel">
+                <div class="panel-title">MD5 HASH CRACKING</div>
+                
+                <div class="hint-panel">
+                    <div class="hint-text">
+                        <strong>MD5 ANALYSIS:</strong> 32-character hexadecimal hash detected. Use online lookup, hashcat, or john to crack. Common wordlist recommended.
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="md5Hash">MD5 HASH INPUT</label>
+                    <input type="text" id="md5Hash" class="form-input" placeholder="Enter 32-character MD5 hash" value="8d01676ad52c43fe0cb695ed248b9ce7">
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn" onclick="crackMD5()">CRACK MD5 HASH</button>
+                    <button class="btn btn-warning" onclick="getMD5Hint()">GET HINT</button>
+                </div>
+                
+                <div id="md5Result" class="result hidden"></div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">BASE64 DECODING</div>
+                
+                <div class="hint-panel">
+                    <div class="hint-text">
+                        <strong>BASE64 ANALYSIS:</strong> Base64 encoded string detected. Use online decoder or built-in tools to decode. Result should match MD5 plaintext.
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="base64String">BASE64 STRING INPUT</label>
+                    <input type="text" id="base64String" class="form-input" placeholder="Enter Base64 string" value="Rk9VTlRBSU4=">
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-secondary" onclick="decodeBase64()">DECODE BASE64</button>
+                    <button class="btn btn-warning" onclick="getBase64Hint()">GET HINT</button>
+                </div>
+                
+                <div id="base64Result" class="result hidden"></div>
+            </div>
+        </div>
+        
+        <div class="flag-panel">
+            <h3>FINAL FLAG ASSEMBLY</h3>
+            <div style="margin: 15px 0;">
+                <label class="form-label" for="finalFlag">COMPLETE FLAG</label>
+                <input type="text" id="finalFlag" class="form-input" placeholder="flag{...}" style="text-align: center; font-size: 16px;">
+            </div>
+            <button class="btn btn-success" onclick="submitFinalFlag()">SUBMIT FINAL FLAG</button>
+            <div id="finalResult" class="result hidden"></div>
+        </div>
+        
+        <div class="terminal">
+            <div id="terminalOutput">Hash cracking station initialized. Ready for cryptographic analysis.</div>
+        </div>
+    </div>
+
+    <script>
+        // Terminal effects
+        const terminalOutput = document.getElementById('currentTime');
+        const terminalLog = document.getElementById('terminalOutput');
+        
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            terminalOutput.textContent = timeString;
+        }
+        
+        function addTerminalMessage(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #666;">[${timestamp}]</span> <span style="color: ${type === 'error' ? '#ff6666' : type === 'success' ? '#00ff00' : '#ffff00'};">${message}</span>`;
+            terminalLog.appendChild(logEntry);
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+        }
+        
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+        addTerminalMessage('Hash cracking station initialized');
+        addTerminalMessage('MD5 and Base64 algorithms loaded');
+        addTerminalMessage('Ready for cryptographic analysis');
+        
+        function crackMD5() {
+            const hash = document.getElementById('md5Hash').value.trim();
+            
+            if (!hash) {
+                showMD5Result('ERROR: No MD5 hash provided', 'error');
+                return;
+            }
+            
+            if (hash.length !== 32) {
+                showMD5Result('ERROR: Invalid MD5 hash format. Must be 32 characters.', 'error');
+                return;
+            }
+            
+            addTerminalMessage(`Cracking MD5 hash: ${hash}`);
+            
+            // Simulate MD5 cracking
+            setTimeout(() => {
+                if (hash === '8d01676ad52c43fe0cb695ed248b9ce7') {
+                    const result = `MD5 CRACKING SUCCESSFUL
+Hash: ${hash}
+Plaintext: FOUNTAIN
+Algorithm: MD5
+Status: CRACKED
+Time: 2.3 seconds
+
+NEXT STAGE: Decode Base64 string
+Base64: Rk9VTlRBSU4=`;
+                    
+                    showMD5Result(result, 'success');
+                    addTerminalMessage('MD5 hash cracked successfully', 'success');
+                    
+                    // Auto-fill Base64 field
+                    document.getElementById('base64String').value = 'Rk9VTlRBSU4=';
+                    
+                    // Update stage indicator
+                    updateStageIndicator(2, true);
+                    updateStageIndicator(3, true);
+                } else {
+                    showMD5Result('ERROR: Hash not found in database. Try: 8d01676ad52c43fe0cb695ed248b9ce7', 'error');
+                    addTerminalMessage('MD5 hash cracking failed', 'error');
+                }
+            }, 2000);
+        }
+        
+        function decodeBase64() {
+            const base64 = document.getElementById('base64String').value.trim();
+            
+            if (!base64) {
+                showBase64Result('ERROR: No Base64 string provided', 'error');
+                return;
+            }
+            
+            addTerminalMessage(`Decoding Base64: ${base64}`);
+            
+            try {
+                const decoded = atob(base64);
+                const result = `BASE64 DECODING SUCCESSFUL
+Input: ${base64}
+Output: ${decoded}
+Algorithm: Base64
+Status: DECODED
+
+FINAL FLAG: flag{IN_FRONT_OF_${decoded}}`;
+                
+                showBase64Result(result, 'success');
+                addTerminalMessage('Base64 decoding successful', 'success');
+                
+                // Auto-fill final flag
+                document.getElementById('finalFlag').value = `flag{IN_FRONT_OF_${decoded}}`;
+                
+                // Update stage indicator
+                updateStageIndicator(3, true);
+                updateStageIndicator(4, true);
+            } catch (error) {
+                showBase64Result('ERROR: Invalid Base64 string', 'error');
+                addTerminalMessage('Base64 decoding failed', 'error');
+            }
+        }
+        
+        function submitFinalFlag() {
+            const flag = document.getElementById('finalFlag').value.trim();
+            
+            if (!flag) {
+                showFinalResult('ERROR: No flag provided', 'error');
+                return;
+            }
+            
+            addTerminalMessage(`Submitting flag: ${flag}`);
+            
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showFinalResult(`✓ FLAG ACCEPTED\n${data.message}`, 'success');
+                    addTerminalMessage('Flag submission successful!', 'success');
+                    updateStageIndicator(4, true);
+                } else {
+                    showFinalResult(`✗ FLAG REJECTED\n${data.message}`, 'error');
+                    addTerminalMessage(`Flag submission failed: ${data.message}`, 'error');
+                }
+            })
+            .catch(error => {
+                showFinalResult(`✗ SUBMISSION ERROR\n${error.message}`, 'error');
+                addTerminalMessage(`Submission error: ${error.message}`, 'error');
+            });
+        }
+        
+        function getMD5Hint() {
+            addTerminalMessage('MD5 hint requested');
+            showMD5Result('HINT: Try online MD5 lookup tools like md5decrypt.net or use hashcat with common wordlists.', 'info');
+        }
+        
+        function getBase64Hint() {
+            addTerminalMessage('Base64 hint requested');
+            showBase64Result('HINT: Use online Base64 decoders or built-in browser tools. The result should match the MD5 plaintext.', 'info');
+        }
+        
+        function showMD5Result(message, type) {
+            const resultDiv = document.getElementById('md5Result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function showBase64Result(message, type) {
+            const resultDiv = document.getElementById('base64Result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function showFinalResult(message, type) {
+            const resultDiv = document.getElementById('finalResult');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function updateStageIndicator(stageIndex, completed) {
+            const stages = document.querySelectorAll('.stage');
+            if (stages[stageIndex]) {
+                stages[stageIndex].classList.remove('active', 'pending');
+                stages[stageIndex].classList.add(completed ? 'completed' : 'active');
+            }
+        }
+        
+        // Add some random terminal messages for atmosphere
+        const randomMessages = [
+            'Hash database updated',
+            'Crypto algorithms loaded',
+            'Brute force engine ready',
+            'Wordlist processing complete',
+            'Rainbow tables loaded',
+            'GPU acceleration active',
+            'Distributed cracking online'
+        ];
+        
+        setInterval(() => {
+            if (Math.random() < 0.2) {
+                const message = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+                addTerminalMessage(message);
+            }
+        }, 6000);
+    </script>
+</body>
+</html>

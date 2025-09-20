@@ -1,0 +1,10 @@
+# Netlify redirects file
+# Handle API routes
+/api/* /.netlify/functions/:splat 200
+
+# Handle SPA routing
+/* /index.html 200
+
+# Handle specific routes
+/dashboard /dashboard.html 200
+/hash-cracking /hash-cracking.html 200

@@ -1,0 +1,27 @@
+{
+  "name": "sqli-ctf-challenge",
+  "version": "1.0.0",
+  "description": "Level-8 CTF Challenge: SQL Injection + Steganography",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup": "node setup-db.js",
+    "build": "npm run setup && echo 'Build completed for Netlify'",
+    "netlify-dev": "netlify dev",
+    "netlify-build": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "express-rate-limit": "^7.1.5",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["performance", "optimization", "monitoring", "metrics"],
+  "author": "CTF Challenge",
+  "license": "MIT"
+}
