@@ -9,6 +9,9 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Vercel serverless compatibility
+module.exports = app;
+
 // Rate limiting for login attempts
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -268,12 +271,14 @@ app.get('/assets/inspect.png', (req, res) => {
   res.redirect(301, '/inspect.png');
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`CTF Challenge server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Real flag: ${process.env.FLAG_REAL || 'Congratulations ! You found the real flag !'}`);
-});
+// Only start server if not in Vercel environment
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`CTF Challenge server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Real flag: ${process.env.FLAG_REAL || 'Congratulations ! You found the real flag !'}`);
+  });
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
