@@ -78,14 +78,43 @@ const logRequest = (req, res, next) => {
 
 app.use(logRequest);
 
-// Initialize database
-const db = new sqlite3.Database('ctf.db', (err) => {
+// Initialize database - use in-memory for Vercel, file for local
+const dbPath = process.env.VERCEL ? ':memory:' : 'ctf.db';
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
   } else {
-    console.log('Connected to SQLite database');
+    console.log(`Connected to SQLite database: ${dbPath}`);
   }
 });
+
+// Initialize database schema for Vercel (in-memory)
+if (process.env.VERCEL) {
+  // Create users table
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'user'
+  )`);
+  
+  // Create secrets table
+  db.run(`CREATE TABLE IF NOT EXISTS secrets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+  
+  // Insert sample data
+  db.run(`INSERT OR IGNORE INTO users (username, password, role) VALUES 
+    ('admin', 'admin123', 'admin'),
+    ('user', 'password123', 'user'),
+    ('guest', 'guest123', 'user')`);
+  
+  db.run(`INSERT OR IGNORE INTO secrets (title, content) VALUES 
+    ('Secret Note', '/inspect.png')`);
+}
 
 // Vulnerable login endpoint - INTENTIONALLY VULNERABLE
 app.post('/login', loginLimiter, (req, res) => {
