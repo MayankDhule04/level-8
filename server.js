@@ -137,17 +137,14 @@ app.post('/login', loginLimiter, (req, res) => {
   // Check for SQL injection patterns - be more permissive
   const inputString = `${username}${password}`;
   
-  // Allow any SQL injection pattern
-  const hasSQLiPattern = /['"]\s*(or|and|union|select|insert|update|delete|drop)/i.test(inputString) ||
-                        /['"]\s*\d+\s*=\s*\d+/i.test(inputString) ||
-                        /['"]\s*(true|false)/i.test(inputString) ||
-                        /['"]\s*1\s*=\s*1/i.test(inputString) ||
-                        /['"]\s*'[^']*'\s*=\s*'[^']*'/i.test(inputString) ||
-                        /['"]\s*"[^"]*"\s*=\s*"[^"]*"/i.test(inputString) ||
-                        /['"]\s*or\s*['"]?\d/i.test(inputString) ||
-                        inputString.includes("' OR '1") ||
+  // Simplified SQL injection detection - focus on ' OR '1
+  const hasSQLiPattern = inputString.includes("' OR '1") ||
                         inputString.includes("' OR 1=1") ||
-                        inputString.includes("' OR 'x'='x");
+                        inputString.includes("' OR 'x'='x") ||
+                        /['"]\s*or\s*['"]?\d/i.test(inputString) ||
+                        /['"]\s*1\s*=\s*1/i.test(inputString);
+  
+  console.log(`[SQL INJECTION CHECK] Input: "${inputString}", Pattern detected: ${hasSQLiPattern}`);
   
   // Always allow the request to proceed (this is a CTF challenge)
   // Comment out the blocking logic for testing
