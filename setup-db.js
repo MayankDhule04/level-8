@@ -95,13 +95,13 @@ const seedData = () => {
         
         // Insert secret - this is what the SQLi should reveal
         const insertSecret = db.prepare('INSERT INTO secrets (note, owner) VALUES (?, ?)');
-        insertSecret.run('/assets/inspect.png', 'admin', (err) => {
+        insertSecret.run('/inspect.png', 'admin', (err) => {
           if (err) {
             console.error('Error inserting secret:', err.message);
             reject(err);
             return;
           }
-          console.log('Inserted secret: /assets/inspect.png');
+          console.log('Inserted secret: /inspect.png');
           insertSecret.finalize();
           resolve();
         });

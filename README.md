@@ -58,7 +58,7 @@ The server will run on `http://localhost:3000` by default.
 
 ### Database Schema
 - **users**: Contains user accounts (admin, user1, test, guest)
-- **secrets**: Contains the path to the stego image (`/assets/inspect.png`)
+- **secrets**: Contains the path to the stego image (`/inspect.png`)
 
 ### Vulnerable Endpoint
 - **POST /login**: Intentionally vulnerable to SQL injection

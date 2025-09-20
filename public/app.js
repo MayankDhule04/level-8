@@ -269,7 +269,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 htmlHash: '1751721a4245734b1ff733b4a7ebe952',
                 cssBase64: 'VXJsL2lu',
                 jsBase64: 'c3BlY3QucG5nCg==',
-                completeBase64: 'VXJsL2luc3BlY3QucG5nCg=='
+                completeBase64: 'VXJsL2luc3BlY3QucG5nCg==',
+                decodedPath: 'Url/inspect.png',
+                actualPath: '/inspect.png'
             },
             recommendation: 'Analyze the extracted hash and base64 data',
             timestamp: new Date().toISOString()
@@ -306,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             findings: {
                 md5Hash: '1751721a4245734b1ff733b4a7ebe952',
                 base64Decoded: 'Url/inspect.png',
-                steganographyImage: '/assets/inspect.png',
+                steganographyImage: '/inspect.png',
                 flagFormat: 'flag{Url/inspect.png}'
             },
             recommendation: 'Download and analyze the steganography image for final verification',
@@ -412,9 +414,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleCryptoClick() {
         const cryptoBtn = document.getElementById('crypto-btn');
         cryptoBtn.classList.add('flash');
-        setTimeout(() => {
+            setTimeout(() => {
             cryptoBtn.classList.remove('flash');
-        }, 500);
+            }, 500);
         
         logUIEvent('crypto_clicked');
         stepsCompleted++;
@@ -501,7 +503,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 md5Hash: '1751721a4245734b1ff733b4a7ebe952',
                 base64Data: 'VXJsL2luc3BlY3QucG5nCg==',
                 decodedResult: 'Url/inspect.png',
-                verification: 'Hash matches expected value'
+                verification: 'Hash matches expected value',
+                imagePath: '/inspect.png'
             },
             timestamp: new Date().toISOString()
         };

