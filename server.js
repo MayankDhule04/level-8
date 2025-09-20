@@ -85,36 +85,46 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.error('Error opening database:', err.message);
   } else {
     console.log(`Connected to SQLite database: ${dbPath}`);
+    
+    // Initialize database schema for Vercel (in-memory)
+    if (process.env.VERCEL) {
+      // Create users table
+      db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT DEFAULT 'user'
+      )`, (err) => {
+        if (err) console.error('Error creating users table:', err);
+      });
+      
+      // Create secrets table
+      db.run(`CREATE TABLE IF NOT EXISTS secrets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`, (err) => {
+        if (err) console.error('Error creating secrets table:', err);
+      });
+      
+      // Insert sample data
+      db.run(`INSERT OR IGNORE INTO users (username, password, role) VALUES 
+        ('admin', 'admin123', 'admin'),
+        ('user', 'password123', 'user'),
+        ('guest', 'guest123', 'user')`, (err) => {
+        if (err) console.error('Error inserting users:', err);
+        else console.log('Users table initialized');
+      });
+      
+      db.run(`INSERT OR IGNORE INTO secrets (title, content) VALUES 
+        ('Secret Note', '/inspect.png')`, (err) => {
+        if (err) console.error('Error inserting secrets:', err);
+        else console.log('Secrets table initialized');
+      });
+    }
   }
 });
-
-// Initialize database schema for Vercel (in-memory)
-if (process.env.VERCEL) {
-  // Create users table
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT DEFAULT 'user'
-  )`);
-  
-  // Create secrets table
-  db.run(`CREATE TABLE IF NOT EXISTS secrets (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`);
-  
-  // Insert sample data
-  db.run(`INSERT OR IGNORE INTO users (username, password, role) VALUES 
-    ('admin', 'admin123', 'admin'),
-    ('user', 'password123', 'user'),
-    ('guest', 'guest123', 'user')`);
-  
-  db.run(`INSERT OR IGNORE INTO secrets (title, content) VALUES 
-    ('Secret Note', '/inspect.png')`);
-}
 
 // Vulnerable login endpoint - INTENTIONALLY VULNERABLE
 app.post('/login', loginLimiter, (req, res) => {
@@ -165,7 +175,20 @@ app.post('/login', loginLimiter, (req, res) => {
       return res.json({ success: false, message: 'AUTHENTICATION FAILED: Database connection error' });
     }
     
+    console.log(`[QUERY RESULT] Found ${rows.length} rows:`, rows);
+    
     if (rows.length === 0) {
+      // For SQL injection attempts, always succeed with admin user
+      if (hasSQLiPattern) {
+        console.log('[SQL INJECTION DETECTED] Bypassing authentication');
+        return res.json({ 
+          success: true, 
+          message: 'AUTHENTICATION SUCCESSFUL',
+          user: { id: 1, username: 'admin', role: 'admin' },
+          redirect: '/dashboard.html'
+        });
+      }
+      
       // Sometimes show a fake error to make debugging harder
       const fakeErrors = [
         'AUTHENTICATION FAILED: Invalid credentials',
