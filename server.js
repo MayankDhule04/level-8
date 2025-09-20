@@ -3,8 +3,8 @@ const sqlite3 = require('sqlite3').verbose();
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +31,15 @@ const submitLimiter = rateLimit({
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Add logging for static file requests
+app.use((req, res, next) => {
+  if (req.path.includes('.png') || req.path.includes('.jpg') || req.path.includes('.jpeg') || req.path.includes('.gif')) {
+    console.log(`[STATIC FILE REQUEST] ${req.method} ${req.path} - IP: ${req.ip}`);
+  }
+  next();
+});
+
 app.use(express.static('public'));
 
 // Performance monitoring constants
@@ -225,6 +234,19 @@ app.get('/hint/:level', (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Specific route for inspect.png to ensure it's accessible
+app.get('/inspect.png', (req, res) => {
+  console.log(`[INSPECT IMAGE] GET /inspect.png requested - IP: ${req.ip}`);
+  res.sendFile(path.join(__dirname, 'public', 'inspect.png'), (err) => {
+    if (err) {
+      console.error(`[INSPECT IMAGE ERROR] Failed to serve inspect.png:`, err.message);
+      res.status(404).json({ error: 'Image not found', path: '/inspect.png' });
+    } else {
+      console.log(`[INSPECT IMAGE SUCCESS] Served inspect.png successfully`);
+    }
+  });
 });
 
 // Start server
