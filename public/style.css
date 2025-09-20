@@ -236,6 +236,61 @@ body {
   }
 }
 
+/* Image preview styles */
+.image-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.image-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  text-shadow: 0 0 5px var(--primary-color);
+}
+
+.image-description {
+  color: var(--text-color);
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.image-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.image-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.image-info p {
+  margin: 10px 0;
+  color: #ccc;
+}
+
+.image-info code {
+  background: rgba(0, 255, 65, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #00ff41;
+}
+
+.image-info a {
+  color: #00ff41;
+  text-decoration: none;
+}
+
+.image-info a:hover {
+  text-decoration: underline;
+}
+
 /* Flag submission styles */
 .flag-section {
   margin: 30px 0;

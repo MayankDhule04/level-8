@@ -249,6 +249,25 @@ app.get('/inspect.png', (req, res) => {
   });
 });
 
+// Serve image at the requested path
+app.get('/dashboard.html/inspect.png', (req, res) => {
+  console.log(`[INSPECT IMAGE] GET /dashboard.html/inspect.png requested - IP: ${req.ip}`);
+  res.sendFile(path.join(__dirname, 'public', 'inspect.png'), (err) => {
+    if (err) {
+      console.error(`[INSPECT IMAGE ERROR] Failed to serve inspect.png:`, err.message);
+      res.status(404).json({ error: 'Image not found', path: '/dashboard.html/inspect.png' });
+    } else {
+      console.log(`[INSPECT IMAGE SUCCESS] Served inspect.png at /dashboard.html/inspect.png successfully`);
+    }
+  });
+});
+
+// Handle other incorrect paths
+app.get('/assets/inspect.png', (req, res) => {
+  console.log(`[REDIRECT] User tried to access /assets/inspect.png - redirecting to /inspect.png - IP: ${req.ip}`);
+  res.redirect(301, '/inspect.png');
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`CTF Challenge server running on port ${PORT}`);

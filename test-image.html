@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Image Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        img {
+            max-width: 400px;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+        }
+        .error {
+            color: #ff4444;
+        }
+        .success {
+            color: #44ff44;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Access Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Direct Image Access</h2>
+        <p>Testing: <code>/inspect.png</code></p>
+        <img src="/inspect.png" alt="Inspect Image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none;" class="error">❌ Image not found at /inspect.png</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Alternative Path</h2>
+        <p>Testing: <code>/assets/inspect.png</code></p>
+        <img src="/assets/inspect.png" alt="Inspect Image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none;" class="error">❌ Image not found at /assets/inspect.png</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Relative Path</h2>
+        <p>Testing: <code>inspect.png</code></p>
+        <img src="inspect.png" alt="Inspect Image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none;" class="error">❌ Image not found at inspect.png</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>JavaScript Test</h2>
+        <p>Testing image loading with JavaScript:</p>
+        <div id="js-result">Testing...</div>
+        <script>
+            const testPaths = ['/inspect.png', '/assets/inspect.png', 'inspect.png'];
+            const resultDiv = document.getElementById('js-result');
+            
+            async function testImage(path) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve({ path, status: 'success' });
+                    img.onerror = () => resolve({ path, status: 'error' });
+                    img.src = path;
+                });
+            }
+            
+            async function runTests() {
+                let results = [];
+                for (const path of testPaths) {
+                    const result = await testImage(path);
+                    results.push(result);
+                }
+                
+                resultDiv.innerHTML = results.map(r => 
+                    `<div class="${r.status}">${r.status === 'success' ? '✅' : '❌'} ${r.path}</div>`
+                ).join('');
+            }
+            
+            runTests();
+        </script>
+    </div>
+    
+    <div class="test-section">
+        <h2>Current URL Info</h2>
+        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+        <p><strong>Base URL:</strong> <span id="base-url"></span></p>
+        <script>
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('base-url').textContent = window.location.origin;
+        </script>
+    </div>
+</body>
+</html>

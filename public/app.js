@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 jsBase64: 'c3BlY3QucG5nCg==',
                 completeBase64: 'VXJsL2luc3BlY3QucG5nCg==',
                 decodedPath: 'Url/inspect.png',
-                actualPath: '/inspect.png'
+                actualPath: '/dashboard.html/inspect.png'
             },
             recommendation: 'Analyze the extracted hash and base64 data',
             timestamp: new Date().toISOString()
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             findings: {
                 md5Hash: '1751721a4245734b1ff733b4a7ebe952',
                 base64Decoded: 'Url/inspect.png',
-                steganographyImage: '/inspect.png',
+                steganographyImage: '/dashboard.html/inspect.png',
                 flagFormat: 'flag{Url/inspect.png}'
             },
             recommendation: 'Download and analyze the steganography image for final verification',
@@ -400,6 +400,15 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         displayResults('STEGANOGRAPHY ANALYSIS COMPLETE', stegoResults);
+        
+        // Show image preview section
+        setTimeout(() => {
+            const imagePreview = document.getElementById('image-preview');
+            if (imagePreview) {
+                imagePreview.style.display = 'block';
+                imagePreview.style.animation = 'fadeInUp 0.5s ease-out';
+            }
+        }, 1000);
         
         // Show crypto button after stego
         setTimeout(() => {
@@ -504,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 base64Data: 'VXJsL2luc3BlY3QucG5nCg==',
                 decodedResult: 'Url/inspect.png',
                 verification: 'Hash matches expected value',
-                imagePath: '/inspect.png'
+                imagePath: '/dashboard.html/inspect.png'
             },
             timestamp: new Date().toISOString()
         };

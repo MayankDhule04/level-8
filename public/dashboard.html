@@ -177,21 +177,36 @@
                     </div>
                 </div>
 
-                <!-- Flag submission section -->
-                <div id="flag-submission" class="flag-section" style="display:none;">
-                    <h3>Flag Submission</h3>
-                    <p class="flag-description">Submit your final flag to complete the challenge</p>
-                    
-                    <div class="flag-input-section">
-                        <label class="form-label" for="flagInput">Enter Flag:</label>
-                        <input type="text" id="flagInput" class="form-input" placeholder="flag{...}">
-                        <button id="submit-flag-btn" class="inspect-btn">Submit Flag</button>
-                    </div>
-                    
-                    <div id="flag-result" class="flag-result" style="display:none;">
-                        <div id="flag-message" class="flag-message"></div>
-                    </div>
+        <!-- Image Preview Section -->
+        <div id="image-preview" class="image-section" style="display:none;">
+            <h3>Steganography Image</h3>
+            <p class="image-description">Download and analyze this image for hidden data</p>
+            
+            <div class="image-container">
+                <img id="stego-image" src="/dashboard.html/inspect.png" alt="Steganography Image" style="max-width: 400px; border: 2px solid #00ff41; border-radius: 8px;">
+                <div class="image-info">
+                    <p><strong>Image Path:</strong> <code>/dashboard.html/inspect.png</code></p>
+                    <p><strong>Direct URL:</strong> <a href="/dashboard.html/inspect.png" target="_blank">http://localhost:3000/dashboard.html/inspect.png</a></p>
+                    <p><strong>Instructions:</strong> Right-click the image and "Save image as..." to download it for analysis</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Flag submission section -->
+        <div id="flag-submission" class="flag-section" style="display:none;">
+            <h3>Flag Submission</h3>
+            <p class="flag-description">Submit your final flag to complete the challenge</p>
+            
+            <div class="flag-input-section">
+                <label class="form-label" for="flagInput">Enter Flag:</label>
+                <input type="text" id="flagInput" class="form-input" placeholder="flag{...}">
+                <button id="submit-flag-btn" class="inspect-btn">Submit Flag</button>
+            </div>
+            
+            <div id="flag-result" class="flag-result" style="display:none;">
+                <div id="flag-message" class="flag-message"></div>
+            </div>
+        </div>
 
                 <!-- Challenge Statistics -->
                 <div id="challenge-stats" class="stats-section" style="display:none;">
