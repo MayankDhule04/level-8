@@ -17,6 +17,30 @@
       "dest": "/server.js"
     },
     {
+      "src": "/login",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/submit",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/hint/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/ui-log",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/inspect.png",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/dashboard.html/inspect.png",
+      "dest": "/server.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
